@@ -7,15 +7,12 @@ import com.whg.chess.model.enums.Color;
 import com.whg.chess.model.enums.PieceName;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
-import java.util.stream.Stream;
 
-import static com.whg.chess.model.Coordinates.of;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
@@ -33,36 +30,37 @@ class BishopValidationTest {
     private BoardFactory boardFactory;
 
     @ParameterizedTest
-    @MethodSource("getValidMoves")
+    @CsvSource({
+            "E4,H7, Long north-east diagonal",
+            "E4,H1, Long south-east diagonal",
+            "E4,A8, Long north-west diagonal",
+            "E4,B1, Long south-west diagonal",
+            "E4,D5, Target is right near the piece on north-west diagonal",
+            "E4,F5, Target is right near the piece on north-east diagonal",
+            "E4,F3, Target is right near the piece on south-east diagonal",
+            "E4,D3, Target is right near the piece on south-west diagonal"
+    })
     @DisplayName("Bishop can reach target at different positions on diagonal")
-    void testValidMoves(Coordinates from, Coordinates to) {
+    void testValidMoves(String from, String to, String comment) {
         Board board = boardFactory.getClearBoard();
 
         setBishop(board, from);
         setOpponentsPiece(board, to);
 
-        Board afterMove = engine.performMove(board, new Move(Color.WHITE, from, to));
+        Board afterMove = engine.performMove(board, new Move(Color.WHITE, Coordinates.of(from), Coordinates.of(to)));
 
         validatePieceCaptured(to, afterMove);
     }
 
-    private static Stream<Arguments> getValidMoves() {
-        return Stream.of(
-                Arguments.of(of("e4"), of("h7")),
-                Arguments.of(of("e4"), of("h1")),
-                Arguments.of(of("e4"), of("a8")),
-                Arguments.of(of("e4"), of("b1")),
-                Arguments.of(of("e4"), of("d5")),
-                Arguments.of(of("e4"), of("f5")),
-                Arguments.of(of("e4"), of("f3")),
-                Arguments.of(of("e4"), of("d3"))
-        );
-    }
-
     @ParameterizedTest
-    @MethodSource("getMovesWithPiecesOnPath")
+    @CsvSource({
+            "E4,H7,F5, The piece on the path on north-east diagonal",
+            "E4,H1,G2, The piece on the path on south-east diagonal",
+            "E4,A8,C6, The piece on the path on north-west diagonal",
+            "E4,B1,C2, The piece on the path on south-west diagonal"
+    })
     @DisplayName("Target is on a diagonal but there is a piece on it's path")
-    void testWithPieceOnPath(Coordinates from, Coordinates to, Coordinates pieceOnPath) {
+    void testWithPieceOnPath(String from, String to, String pieceOnPath, String comment) {
 
         Board board = boardFactory.getClearBoard();
 
@@ -72,29 +70,14 @@ class BishopValidationTest {
 
         ValidationException thrown = assertThrows(
                 ValidationException.class,
-                () -> engine.performMove(board, new Move(Color.WHITE, from, to))
+                () -> engine.performMove(board, new Move(Color.WHITE, Coordinates.of(from), Coordinates.of(to)))
         );
 
-        assertThat(thrown.getMessage(), containsString("Bishop can't reach square at " + to + " since there is a piece in between at " + pieceOnPath));
+        assertThat(thrown.getMessage(), containsString(to + " can't be reached since there is a piece at " + pieceOnPath + " on the path"));
     }
 
-    /*
-     * The data has format:
-     * 1. From square
-     * 2. To Square
-     * 3. Piece on the path
-     */
-    private static Stream<Arguments> getMovesWithPiecesOnPath() {
-        return Stream.of(
-                Arguments.of(of("e4"), of("h7"), of("f5")),
-                Arguments.of(of("e4"), of("h1"), of("g2")),
-                Arguments.of(of("e4"), of("a8"), of("c6")),
-                Arguments.of(of("e4"), of("b1"), of("c2"))
-        );
-    }
-
-    private void validatePieceCaptured(Coordinates to, Board afterMove) {
-        assertEquals(PieceName.BISHOP, afterMove.getSquare(to).getPiece().getName());
+    private void validatePieceCaptured(String to, Board afterMove) {
+        assertEquals(PieceName.BISHOP, afterMove.getSquare(Coordinates.of(to)).getPiece().getName());
 
         List<Square> whitePieces = afterMove.getSquaresWithPieces(Color.WHITE);
         assertThat(whitePieces, hasSize(1));
@@ -103,13 +86,13 @@ class BishopValidationTest {
         assertThat(blackPieces, hasSize(0));
     }
 
-    private void setOpponentsPiece(Board board, Coordinates coordinates) {
-        Square squareWithBlackKnight = board.getSquare(coordinates);
+    private void setOpponentsPiece(Board board, String coordinates) {
+        Square squareWithBlackKnight = board.getSquare(Coordinates.of(coordinates));
         squareWithBlackKnight.setPiece(new Piece(PieceName.KNIGHT, Color.BLACK));
     }
 
-    private void setBishop(Board board, Coordinates coordinates) {
-        Square squareWithWhiteBishop = board.getSquare(coordinates);
+    private void setBishop(Board board, String coordinates) {
+        Square squareWithWhiteBishop = board.getSquare(Coordinates.of(coordinates));
         squareWithWhiteBishop.setPiece(new Piece(PieceName.BISHOP, Color.WHITE));
     }
 

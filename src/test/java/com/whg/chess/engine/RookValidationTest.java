@@ -8,13 +8,11 @@ import com.whg.chess.model.enums.PieceName;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
-import java.util.stream.Stream;
 
 import static com.whg.chess.model.Coordinates.of;
 import static org.hamcrest.CoreMatchers.containsString;
@@ -34,9 +32,18 @@ class RookValidationTest {
     private BoardFactory boardFactory;
 
     @ParameterizedTest
-    @MethodSource("getValidMoves")
-    @DisplayName("Rook must reach targets on verticals on diagonals")
-    void testValidMoves(Coordinates from, Coordinates to) {
+    @CsvSource({
+            "E4,E8, Target is on the most distant square on north",
+            "E4,E1, Target is on the most distant square on south",
+            "E4,A4, Target is on the most distant square on west",
+            "E4,H4, Target is on the most distant square on east",
+            "E4,E5, Target is right near the piece on north",
+            "E4,E3, Target is right near the piece on south",
+            "E4,F4, Target is right near the piece on east",
+            "E4,D4, Target is right near the piece on west"
+    })
+    @DisplayName("Rook must reach targets on verticals and horizontals")
+    void testValidMoves(Coordinates from, Coordinates to, String comment) {
         Board board = boardFactory.getClearBoard();
 
         setRook(board, from);
@@ -47,23 +54,15 @@ class RookValidationTest {
         validatePieceCaptured(to, afterMove);
     }
 
-    private static Stream<Arguments> getValidMoves() {
-        return Stream.of(
-                Arguments.of(of("e4"), of("e8")),
-                Arguments.of(of("e4"), of("e1")),
-                Arguments.of(of("e4"), of("a4")),
-                Arguments.of(of("e4"), of("h4")),
-                Arguments.of(of("e4"), of("e5")),
-                Arguments.of(of("e4"), of("e3")),
-                Arguments.of(of("e4"), of("f4")),
-                Arguments.of(of("e4"), of("d4"))
-        );
-    }
-
     @ParameterizedTest
-    @MethodSource("getMovesWithPiecesOnPath")
+    @CsvSource({
+            "E4,E8,E5, The piece is on the path north",
+            "E4,E1,E2, The piece is on the path south",
+            "E4,A4,C4, The piece is on the path west",
+            "E4,H4,G4, The piece is on the path east"
+    })
     @DisplayName("Target is at the left side but there is a piece between rook and target")
-    void testPieceOnThePath(Coordinates from, Coordinates to, Coordinates pieceOnPath) {
+    void testPieceOnThePath(Coordinates from, Coordinates to, Coordinates pieceOnPath, String comment) {
         Board board = boardFactory.getClearBoard();
 
         setRook(board, from);
@@ -75,22 +74,7 @@ class RookValidationTest {
                 () -> engine.performMove(board, new Move(Color.WHITE, from, to))
         );
 
-        assertThat(thrown.getMessage(), containsString("There is a piece standing on the rook path at " + pieceOnPath));
-    }
-
-    /*
-     * The data has format:
-     * 1. From square
-     * 2. To Square
-     * 3. Piece on the path
-     */
-    private static Stream<Arguments> getMovesWithPiecesOnPath() {
-        return Stream.of(
-                Arguments.of(of("e4"), of("e8"), of("e5")),
-                Arguments.of(of("e4"), of("e1"), of("e2")),
-                Arguments.of(of("e4"), of("a4"), of("c4")),
-                Arguments.of(of("e4"), of("h4"), of("g4"))
-        );
+        assertThat(thrown.getMessage(), containsString(to + " can't be reached since there is a piece at " + pieceOnPath + " on the path"));
     }
 
     @Test
@@ -109,7 +93,7 @@ class RookValidationTest {
                 () -> engine.performMove(board, new Move(Color.WHITE, from, to))
         );
 
-        assertThat(thrown.getMessage(), containsString("Target square " + to + " can't be reached by the rook at " + from));
+        assertThat(thrown.getMessage(), containsString("Rook at " + from + " can't reach " + to + " since it's not on the same horizontal/vertical"));
     }
 
     private void validatePieceCaptured(Coordinates to, Board afterMove) {
