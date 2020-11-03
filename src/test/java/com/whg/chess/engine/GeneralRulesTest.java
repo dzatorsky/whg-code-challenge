@@ -19,7 +19,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
-class GeneralValidationTest {
+class GeneralRulesTest {
 
     @Autowired
     private GameEngine engine;
@@ -34,7 +34,7 @@ class GeneralValidationTest {
     )
     class TheForthRequirementTests {
         @Test
-        @DisplayName("It must not be possible to move square without piece on it")
+        @DisplayName("It must not be possible to piece square without piece on it")
         void testStartingSquarePiece() {
             Board clearBoard = boardFactory.getClearBoard();
 
@@ -79,7 +79,7 @@ class GeneralValidationTest {
         }
 
         @Test
-        @DisplayName("It must not be possible to make a move outside of the borders")
+        @DisplayName("It must not be possible to make a piece outside of the borders")
         void testMoveOutsideBorders() {
             Board board = boardFactory.getClearBoard();
 
@@ -91,7 +91,7 @@ class GeneralValidationTest {
                     () -> engine.performMove(board, new Move(Color.WHITE, Coordinates.of("a1"), Coordinates.of("a555")))
             );
 
-            assertThat(thrown.getMessage(), containsString("The move is illegal since it goes outside the board borders: A555"));
+            assertThat(thrown.getMessage(), containsString("The piece is illegal since it goes outside the board borders: A555"));
         }
     }
 

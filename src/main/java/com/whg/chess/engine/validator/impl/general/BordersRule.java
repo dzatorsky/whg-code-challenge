@@ -1,8 +1,8 @@
-package com.whg.chess.engine.validator.move.impl;
+package com.whg.chess.engine.validator.impl.general;
 
 import com.whg.chess.model.ValidationResult;
 import com.whg.chess.model.enums.ValidationStatus;
-import com.whg.chess.engine.validator.move.MoveValidator;
+import com.whg.chess.engine.validator.impl.Rule;
 import com.whg.chess.model.Board;
 import com.whg.chess.model.Coordinates;
 import com.whg.chess.model.Move;
@@ -11,7 +11,8 @@ import org.springframework.stereotype.Component;
 import java.util.stream.Stream;
 
 @Component
-public class BordersMoveValidator implements MoveValidator {
+@GeneralRule
+public class BordersRule implements Rule {
 
     @Override
     public Boolean canValidate(Board board, Move move) {
@@ -28,7 +29,7 @@ public class BordersMoveValidator implements MoveValidator {
 
     private ValidationResult validateBorders(Board board, Coordinates coordinates) {
         if (coordinates.getRow() > board.getSize() || coordinates.getColumn() > board.getSize()) {
-            return new ValidationResult(ValidationStatus.FAILED, "The move is illegal since it goes outside the board borders: " + coordinates);
+            return new ValidationResult(ValidationStatus.FAILED, "The piece is illegal since it goes outside the board borders: " + coordinates);
         } else {
             return new ValidationResult(ValidationStatus.PASSED);
         }

@@ -20,8 +20,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
-@DisplayName("Requirement #5.2: The bishop can move any number of squares but only diagonally")
-class BishopValidationTest {
+@DisplayName("Requirement #5.2: The bishop can piece any number of squares but only diagonally")
+class BishopRulesTest {
 
     @Autowired
     private GameEngine engine;

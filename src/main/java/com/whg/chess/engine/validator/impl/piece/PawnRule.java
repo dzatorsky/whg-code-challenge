@@ -1,7 +1,7 @@
-package com.whg.chess.engine.validator.move.impl;
+package com.whg.chess.engine.validator.impl.piece;
 
+import com.whg.chess.engine.validator.impl.Rule;
 import com.whg.chess.engine.validator.model.PositionDiff;
-import com.whg.chess.engine.validator.move.MoveValidator;
 import com.whg.chess.engine.validator.utils.PositionUtils;
 import com.whg.chess.model.*;
 import com.whg.chess.model.enums.Color;
@@ -13,8 +13,9 @@ import org.springframework.stereotype.Component;
 import java.util.Optional;
 
 @Component
+@PieceRule
 @RequiredArgsConstructor
-public class PawnMoveValidator implements MoveValidator {
+public class PawnRule implements Rule {
 
     public static final int NORMAL_MOVE_DISTANCE = 1;
     public static final int PAWN_CAPTURING_COLUMN_DISTANCE = 1;
@@ -70,7 +71,7 @@ public class PawnMoveValidator implements MoveValidator {
         if (isAllowedToMoveAhead1Square(move.getColor(), positionDiff) || isAllowedToMoveAhead2Squares(move.getColor(), positionDiff, move, board)) {
             return this.positionUtils.validatePathIsNotBlocked(board, move.getFrom(), move.getTo());
         } else {
-            return new ValidationResult(ValidationStatus.FAILED, move.getColor() + " pawn on " + move.getFrom() + " is not allowed to move to " + move.getTo());
+            return new ValidationResult(ValidationStatus.FAILED, move.getColor() + " pawn on " + move.getFrom() + " is not allowed to piece to " + move.getTo());
         }
     }
 

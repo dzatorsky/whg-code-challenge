@@ -9,7 +9,7 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 public enum RelativePosition {
 
-    NORTH_WEST(+1, -1),
+    NORTH_WEST(-1, +1),
     NORTH_EAST(+1, +1),
     SOUTH_WEST(-1, -1),
     SOUTH_EAST(+1, -1),

@@ -1,19 +1,20 @@
-package com.whg.chess.engine.validator.move.impl;
+package com.whg.chess.engine.validator.impl.piece;
 
+import com.whg.chess.engine.validator.impl.Rule;
 import com.whg.chess.engine.validator.model.PositionDiff;
-import com.whg.chess.engine.validator.move.MoveValidator;
 import com.whg.chess.engine.validator.utils.PositionUtils;
 import com.whg.chess.model.*;
 import com.whg.chess.model.enums.PieceName;
 import com.whg.chess.model.enums.ValidationStatus;
-import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
-@Data
 @Component
-public class BishopMoveValidator implements MoveValidator {
+@PieceRule
+@RequiredArgsConstructor
+public class RookRule implements Rule {
 
     private final PositionUtils positionUtils;
 
@@ -24,21 +25,22 @@ public class BishopMoveValidator implements MoveValidator {
         return Optional.of(fromSquare)
                 .map(Square::getPiece)
                 .map(Piece::getName)
-                .filter(name -> name == PieceName.BISHOP)
+                .filter(name -> name == PieceName.ROOK)
                 .isPresent();
     }
 
     @Override
     public ValidationResult validate(Board board, Move move) {
+
         Coordinates from = move.getFrom();
         Coordinates to = move.getTo();
 
         PositionDiff positionDiff = new PositionDiff(from, to);
 
-        if (positionDiff.isTargetOnDiagonal()) {
+        if (positionDiff.isTargetOnSameColumn() || positionDiff.isTargetOnSameRow()) {
             return positionUtils.validatePathIsNotBlocked(board, from, to);
         } else {
-            return new ValidationResult(ValidationStatus.FAILED, "Bishop at " + from + " can't reach " + to + " since it's not on bishop's diagonal");
+            return new ValidationResult(ValidationStatus.FAILED, "Rook at " + from + " can't reach " + to + " since it's not on the same horizontal/vertical");
         }
 
     }

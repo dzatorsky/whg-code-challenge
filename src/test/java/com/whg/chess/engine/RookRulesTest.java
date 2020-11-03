@@ -22,8 +22,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
-@DisplayName("Requirement #5.3: The rook can move any number of squares but only horizontally or vertically")
-class RookValidationTest {
+@DisplayName("Requirement #5.3: The rook can piece any number of squares but only horizontally or vertically")
+class RookRulesTest {
 
     @Autowired
     private GameEngine engine;

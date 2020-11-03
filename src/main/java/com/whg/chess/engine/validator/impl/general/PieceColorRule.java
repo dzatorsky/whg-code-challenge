@@ -1,6 +1,6 @@
-package com.whg.chess.engine.validator.move.impl;
+package com.whg.chess.engine.validator.impl.general;
 
-import com.whg.chess.engine.validator.move.MoveValidator;
+import com.whg.chess.engine.validator.impl.Rule;
 import com.whg.chess.model.Board;
 import com.whg.chess.model.Move;
 import com.whg.chess.model.Square;
@@ -10,7 +10,8 @@ import com.whg.chess.model.enums.ValidationStatus;
 import org.springframework.stereotype.Component;
 
 @Component
-public class PieceColorMoveValidator implements MoveValidator {
+@GeneralRule
+public class PieceColorRule implements Rule {
 
     @Override
     public Boolean canValidate(Board board, Move move) {
@@ -25,7 +26,7 @@ public class PieceColorMoveValidator implements MoveValidator {
         Color pieceColor = fromSquare.getPiece().getColor();
 
         if (pieceColor != move.getColor()) {
-            return new ValidationResult(ValidationStatus.FAILED, move.getColor() + " color player is trying to move with a " + pieceColor + " piece.");
+            return new ValidationResult(ValidationStatus.FAILED, move.getColor() + " color player is trying to piece with a " + pieceColor + " piece.");
         } else {
             return new ValidationResult(ValidationStatus.PASSED);
         }

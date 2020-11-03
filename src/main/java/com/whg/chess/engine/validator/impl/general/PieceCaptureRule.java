@@ -1,8 +1,8 @@
-package com.whg.chess.engine.validator.move.impl;
+package com.whg.chess.engine.validator.impl.general;
 
 import com.whg.chess.model.ValidationResult;
 import com.whg.chess.model.enums.ValidationStatus;
-import com.whg.chess.engine.validator.move.MoveValidator;
+import com.whg.chess.engine.validator.impl.Rule;
 import com.whg.chess.model.Board;
 import com.whg.chess.model.Move;
 import com.whg.chess.model.Piece;
@@ -11,7 +11,8 @@ import com.whg.chess.model.enums.PieceName;
 import org.springframework.stereotype.Component;
 
 @Component
-public class PieceCaptureMoveValidator implements MoveValidator {
+@GeneralRule
+public class PieceCaptureRule implements Rule {
 
     @Override
     public Boolean canValidate(Board board, Move move) {
