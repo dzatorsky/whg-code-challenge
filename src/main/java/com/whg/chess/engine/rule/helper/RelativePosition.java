@@ -1,4 +1,4 @@
-package com.whg.chess.engine.validator.model;
+package com.whg.chess.engine.rule.helper;
 
 import com.whg.chess.model.Coordinates;
 import lombok.Getter;

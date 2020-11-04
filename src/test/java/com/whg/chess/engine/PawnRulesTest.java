@@ -1,7 +1,7 @@
 package com.whg.chess.engine;
 
 import com.whg.chess.engine.factory.BoardFactory;
-import com.whg.chess.engine.validator.exceptions.ValidationException;
+import com.whg.chess.engine.rule.exceptions.ChessRuleException;
 import com.whg.chess.model.*;
 import com.whg.chess.model.enums.Color;
 import com.whg.chess.model.enums.PieceName;
@@ -65,8 +65,8 @@ class PawnRulesTest {
         setPawn(board, from, color);
         setOpponentsPiece(board, to, color);
 
-        ValidationException thrown = assertThrows(
-                ValidationException.class,
+        ChessRuleException thrown = assertThrows(
+                ChessRuleException.class,
                 () -> engine.performMove(board, new Move(color, Coordinates.of(from), Coordinates.of(to)))
         );
 
@@ -121,8 +121,8 @@ class PawnRulesTest {
 
         setPawn(board, from, color);
 
-        ValidationException thrown = assertThrows(
-                ValidationException.class,
+        ChessRuleException thrown = assertThrows(
+                ChessRuleException.class,
                 () -> engine.performMove(board, new Move(color, Coordinates.of(from), Coordinates.of(to)))
         );
 
@@ -134,15 +134,16 @@ class PawnRulesTest {
             "WHITE,E2,E4,E3, White pawn moving 2 squares ahead when blocked",
             "BLACK,E7,E5,E6, Black pawn moving 2 squares ahead when blocked"
     })
-    @DisplayName("Test 2 square piece from initial postmove when blocked")
+    @DisplayName("Requirement #8: For pieces other than the knight disallow the move if there are any other pieces in the way between the start and end square. + " +
+            "Test 2 square move from initial position when path is blocked")
     void test2SquareMoveWhenBlocked(Color color, String from, String to, String blockingPieceLocation, String comment) {
         Board board = boardFactory.getClearBoard();
 
         setPawn(board, from, color);
         setOpponentsPiece(board, blockingPieceLocation, color);
 
-        ValidationException thrown = assertThrows(
-                ValidationException.class,
+        ChessRuleException thrown = assertThrows(
+                ChessRuleException.class,
                 () -> engine.performMove(board, new Move(color, Coordinates.of(from), Coordinates.of(to)))
         );
 

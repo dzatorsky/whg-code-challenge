@@ -1,4 +1,4 @@
-package com.whg.chess.engine.validator.impl.postmove;
+package com.whg.chess.engine.rule.impl.postmove;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 

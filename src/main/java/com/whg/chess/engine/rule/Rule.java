@@ -1,4 +1,4 @@
-package com.whg.chess.engine.validator.impl;
+package com.whg.chess.engine.rule;
 
 import com.whg.chess.model.ValidationResult;
 import com.whg.chess.model.Board;

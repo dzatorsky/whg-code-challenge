@@ -1,8 +1,8 @@
-package com.whg.chess.engine.validator.impl.general;
+package com.whg.chess.engine.rule.impl.general;
 
 import com.whg.chess.model.ValidationResult;
 import com.whg.chess.model.enums.ValidationStatus;
-import com.whg.chess.engine.validator.impl.Rule;
+import com.whg.chess.engine.rule.Rule;
 import com.whg.chess.model.Board;
 import com.whg.chess.model.Coordinates;
 import com.whg.chess.model.Move;

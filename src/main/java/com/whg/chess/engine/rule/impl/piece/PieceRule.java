@@ -1,4 +1,4 @@
-package com.whg.chess.engine.validator.impl.general;
+package com.whg.chess.engine.rule.impl.piece;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -10,5 +10,5 @@ import java.lang.annotation.Target;
 @Qualifier
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER, ElementType.TYPE, ElementType.ANNOTATION_TYPE})
-public @interface GeneralRule {
+public @interface PieceRule {
 }

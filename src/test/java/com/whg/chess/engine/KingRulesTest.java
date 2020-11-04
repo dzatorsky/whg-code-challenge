@@ -1,11 +1,12 @@
 package com.whg.chess.engine;
 
 import com.whg.chess.engine.factory.BoardFactory;
-import com.whg.chess.engine.validator.exceptions.ValidationException;
+import com.whg.chess.engine.rule.exceptions.ChessRuleException;
 import com.whg.chess.model.*;
 import com.whg.chess.model.enums.Color;
 import com.whg.chess.model.enums.PieceName;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,8 +59,7 @@ class KingRulesTest {
             "E4,F5, KNIGHT,G7, Capturing a piece defended by a knight",
             "E4,F5, BISHOP,C8, Capturing a piece defended by a bishop",
             "E4,F5, ROOK,F8, Capturing a piece defended by a rook",
-            "E4,F5, QUEEN,H5, Capturing a piece defended by a queen",
-            "E4,F5, KING,E6, Capturing a piece defended by a king"
+            "E4,F5, QUEEN,H5, Capturing a piece defended by a queen"
     })
     @DisplayName("Test capturing pieces defended by pieces")
     void testInvalidCaptures(Coordinates from, Coordinates to, PieceName defender, Coordinates defenderPosition, String comment) {
@@ -69,8 +69,8 @@ class KingRulesTest {
         setOpponentsPiece(board, to);
         setOpponentsPiece(board, defenderPosition, defender);
 
-        ValidationException thrown = assertThrows(
-                ValidationException.class,
+        ChessRuleException thrown = assertThrows(
+                ChessRuleException.class,
                 () -> engine.performMove(board, new Move(Color.WHITE, from, to))
         );
 
@@ -95,12 +95,57 @@ class KingRulesTest {
         setKing(board, from);
         setOpponentsPiece(board, to);
 
-        ValidationException thrown = assertThrows(
-                ValidationException.class,
+        ChessRuleException thrown = assertThrows(
+                ChessRuleException.class,
                 () -> engine.performMove(board, new Move(Color.WHITE, from, to))
         );
 
         assertThat(thrown.getMessage(), containsString("The king at " + from + " can't capture a piece at " + to + " since it's too far away"));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "E4, PAWN, D5, Move random piece when white King under Pawn's attack",
+            "E4, KNIGHT, F6, Move random piece when white King under Knight's attack",
+            "E4, BISHOP, A8, Move random piece when white King under Bishop's attack",
+            "E4, ROOK, E1, Move random piece when white King under Rook's attack",
+            "E4, QUEEN, H4, Move random piece when white King under Queen's attack",
+            "E4, KING, F5, Move random piece when white King under King's attack",
+    })
+    @DisplayName("Requirement #9, #10 If a move ends with a player’s king under attack that is “check”. A player cannot end their own move in check")
+    void testInvalidMovesWhenKingIsUnderCheck(Coordinates kingCoordinates, PieceName attackingPieceName, Coordinates attackingPieceCoordinates, String comment) {
+        Board board = boardFactory.getClearBoard();
+
+        setKing(board, kingCoordinates);
+        setOpponentsPiece(board, attackingPieceCoordinates, attackingPieceName);
+        setWhitePiece(board, Coordinates.of("A2"), PieceName.PAWN);
+
+        ChessRuleException thrown = assertThrows(
+                ChessRuleException.class,
+                () -> engine.performMove(board, new Move(Color.WHITE, Coordinates.of("a2"), Coordinates.of("a3")))
+        );
+
+        assertThat(thrown.getMessage(), containsString("The WHITE King is under attack!"));
+    }
+
+    @Test
+    @DisplayName("Tests a case when there is a King pin and the piece moves which opens King to a check and is invalid")
+    void testOpenedPin() {
+        Board board = boardFactory.getClearBoard();
+
+        setKing(board, Coordinates.of("E4"));
+        setOpponentsPiece(board, Coordinates.of("A8"), PieceName.BISHOP);
+        setWhitePiece(board, Coordinates.of("C6"), PieceName.PAWN);
+
+        ChessRuleException thrown = assertThrows(
+                ChessRuleException.class,
+                () -> {
+                    Move movePawnAndOpenKing = new Move(Color.WHITE, Coordinates.of("C6"), Coordinates.of("C7"));
+                    engine.performMove(board, movePawnAndOpenKing);
+                }
+        );
+
+        assertThat(thrown.getMessage(), containsString("The WHITE King is under attack!"));
     }
 
     private void validatePieceCaptured(Coordinates to, Board afterMove) {
@@ -122,9 +167,13 @@ class KingRulesTest {
         opponentsPieceSquare.setPiece(new Piece(pieceName, Color.BLACK));
     }
 
+    private void setWhitePiece(Board board, Coordinates coordinates, PieceName pieceName) {
+        Square square = board.getSquare(coordinates);
+        square.setPiece(new Piece(pieceName, Color.WHITE));
+    }
+
     private void setKing(Board board, Coordinates coordinates) {
-        Square squareWithWhiteBishop = board.getSquare(coordinates);
-        squareWithWhiteBishop.setPiece(new Piece(PieceName.KING, Color.WHITE));
+        setWhitePiece(board, coordinates, PieceName.KING);
     }
 
 }

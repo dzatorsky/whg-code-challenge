@@ -1,7 +1,5 @@
-package com.whg.chess.engine.validator.utils;
+package com.whg.chess.engine.rule.helper;
 
-import com.whg.chess.engine.validator.model.PositionDiff;
-import com.whg.chess.engine.validator.model.RelativePosition;
 import com.whg.chess.model.Board;
 import com.whg.chess.model.Coordinates;
 import com.whg.chess.model.Square;

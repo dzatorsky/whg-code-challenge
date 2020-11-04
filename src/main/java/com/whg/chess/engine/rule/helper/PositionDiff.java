@@ -1,4 +1,4 @@
-package com.whg.chess.engine.validator.model;
+package com.whg.chess.engine.rule.helper;
 
 import com.whg.chess.model.Coordinates;
 import com.whg.chess.model.Move;
@@ -40,6 +40,10 @@ public class PositionDiff {
 
     public boolean isTargetOnSameColumn() {
         return colDiff == 0;
+    }
+
+    public boolean isTargetOnLine() {
+        return isTargetOnSameRow() || isTargetOnSameColumn();
     }
 
     public boolean isTargetOnDiagonal() {

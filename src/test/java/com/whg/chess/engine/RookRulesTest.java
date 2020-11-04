@@ -1,7 +1,7 @@
 package com.whg.chess.engine;
 
 import com.whg.chess.engine.factory.BoardFactory;
-import com.whg.chess.engine.validator.exceptions.ValidationException;
+import com.whg.chess.engine.rule.exceptions.ChessRuleException;
 import com.whg.chess.model.*;
 import com.whg.chess.model.enums.Color;
 import com.whg.chess.model.enums.PieceName;
@@ -61,7 +61,7 @@ class RookRulesTest {
             "E4,A4,C4, The piece is on the path west",
             "E4,H4,G4, The piece is on the path east"
     })
-    @DisplayName("Target is at the left side but there is a piece between rook and target")
+    @DisplayName("Requirement #8. For pieces other than the knight disallow the move if there are any other pieces in the way between the start and end square.")
     void testPieceOnThePath(Coordinates from, Coordinates to, Coordinates pieceOnPath, String comment) {
         Board board = boardFactory.getClearBoard();
 
@@ -69,8 +69,8 @@ class RookRulesTest {
         setOpponentsPiece(board, to);
         setOpponentsPiece(board, pieceOnPath);
 
-        ValidationException thrown = assertThrows(
-                ValidationException.class,
+        ChessRuleException thrown = assertThrows(
+                ChessRuleException.class,
                 () -> engine.performMove(board, new Move(Color.WHITE, from, to))
         );
 
@@ -78,7 +78,7 @@ class RookRulesTest {
     }
 
     @Test
-    @DisplayName("Target is neither on horizonal nor it is on vertical")
+    @DisplayName("Target is neither on horizontal nor it is on vertical")
     void testTargetNotReachable() {
         Board board = boardFactory.getClearBoard();
 
@@ -88,8 +88,8 @@ class RookRulesTest {
         setRook(board, from);
         setOpponentsPiece(board, to);
 
-        ValidationException thrown = assertThrows(
-                ValidationException.class,
+        ChessRuleException thrown = assertThrows(
+                ChessRuleException.class,
                 () -> engine.performMove(board, new Move(Color.WHITE, from, to))
         );
 

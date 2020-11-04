@@ -1,10 +1,10 @@
 package com.whg.chess.engine;
 
-import com.whg.chess.engine.validator.exceptions.ValidationException;
-import com.whg.chess.engine.validator.impl.Rule;
-import com.whg.chess.engine.validator.impl.piece.PieceRule;
-import com.whg.chess.engine.validator.impl.postmove.PostMoveRule;
-import com.whg.chess.engine.validator.impl.general.GeneralRule;
+import com.whg.chess.engine.rule.Rule;
+import com.whg.chess.engine.rule.exceptions.ChessRuleException;
+import com.whg.chess.engine.rule.impl.general.GeneralRule;
+import com.whg.chess.engine.rule.impl.piece.PieceRule;
+import com.whg.chess.engine.rule.impl.postmove.PostMoveRule;
 import com.whg.chess.model.Board;
 import com.whg.chess.model.Move;
 import com.whg.chess.model.Square;
@@ -19,16 +19,16 @@ public class GameEngine {
 
     private final List<Rule> generalRules;
     private final List<Rule> pieceRules;
-    private final List<Rule> postMoveValidators;
+    private final List<Rule> postMoveRules;
 
     public GameEngine(
             @GeneralRule List<Rule> generalRules,
             @PieceRule List<Rule> pieceRules,
-            @PostMoveRule List<Rule> postMoveValidators
+            @PostMoveRule List<Rule> postMoveRules
     ) {
         this.generalRules = generalRules;
         this.pieceRules = pieceRules;
-        this.postMoveValidators = postMoveValidators;
+        this.postMoveRules = postMoveRules;
     }
 
     public Board performMove(Board board, Move move) {
@@ -36,45 +36,32 @@ public class GameEngine {
         validateAgainstRules(generalRules, board, move);
         validateAgainstRules(pieceRules, board, move);
 
-        Board newBoard = performNewMove(board, move);
-
-        validateAgainstRules(postMoveValidators, board, move);
-
-        return newBoard;
+        return performNewMove(board, move);
     }
 
     private void validateAgainstRules(List<Rule> rules, Board board, Move move) {
         ValidationResult validationResult = validateRules(rules, board, move);
         if (validationResult.isFailed()) {
-            throw new ValidationException(validationResult.getExplanation());
+            throw new ChessRuleException(validationResult.getExplanation());
         }
     }
 
     private Board performNewMove(Board board, Move move) {
         Board newPosition = getNewPosition(board, move);
 
-        ValidationResult positionValidationResult = validatePosition(newPosition, move);
+        ValidationResult positionValidationResult = validateRules(postMoveRules, newPosition, move);
         if (positionValidationResult.isSuccess()) {
             return newPosition;
         } else {
-            throw new ValidationException(positionValidationResult.getExplanation());
+            throw new ChessRuleException(positionValidationResult.getExplanation());
         }
-    }
-
-    private ValidationResult validatePosition(Board newPosition, Move move) {
-        return postMoveValidators
-                .stream()
-                .map(validator -> validator.validate(newPosition, move))
-                .filter(ValidationResult::isFailed)
-                .findFirst()
-                .orElse(new ValidationResult(ValidationStatus.PASSED));
     }
 
     private ValidationResult validateRules(List<Rule> rules, Board board, Move move) {
         return rules
                 .stream()
-                .filter(validator -> validator.canValidate(board, move))
-                .map(validator -> validator.validate(board, move))
+                .filter(rule -> rule.canValidate(board, move))
+                .map(rule -> rule.validate(board, move))
                 .filter(ValidationResult::isFailed)
                 .findFirst()
                 .orElse(new ValidationResult(ValidationStatus.PASSED));

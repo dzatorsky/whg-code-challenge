@@ -1,7 +1,7 @@
 package com.whg.chess.engine;
 
 import com.whg.chess.engine.factory.BoardFactory;
-import com.whg.chess.engine.validator.exceptions.ValidationException;
+import com.whg.chess.engine.rule.exceptions.ChessRuleException;
 import com.whg.chess.model.*;
 import com.whg.chess.model.enums.Color;
 import com.whg.chess.model.enums.PieceName;
@@ -19,6 +19,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
+@DisplayName("Requirement #4, #7")
 class GeneralRulesTest {
 
     @Autowired
@@ -38,8 +39,8 @@ class GeneralRulesTest {
         void testStartingSquarePiece() {
             Board clearBoard = boardFactory.getClearBoard();
 
-            ValidationException thrown = assertThrows(
-                    ValidationException.class,
+            ChessRuleException thrown = assertThrows(
+                    ChessRuleException.class,
                     () -> engine.performMove(clearBoard, new Move(Color.WHITE, Coordinates.of("e5"), Coordinates.of("e6")))
             );
 
@@ -51,8 +52,8 @@ class GeneralRulesTest {
         void testDestinationSquareIsTheSameColor() {
             Board startingBoard = boardFactory.getStartingBoard();
 
-            ValidationException thrown = assertThrows(
-                    ValidationException.class,
+            ChessRuleException thrown = assertThrows(
+                    ChessRuleException.class,
                     () -> engine.performMove(startingBoard, new Move(Color.WHITE, Coordinates.of("a1"), Coordinates.of("a2")))
             );
 
@@ -70,8 +71,8 @@ class GeneralRulesTest {
             Square squareWithBlackRook = board.getSquare(Coordinates.of("a8"));
             squareWithBlackRook.setPiece(new Piece(PieceName.ROOK, Color.BLACK));
 
-            ValidationException thrown = assertThrows(
-                    ValidationException.class,
+            ChessRuleException thrown = assertThrows(
+                    ChessRuleException.class,
                     () -> engine.performMove(board, new Move(Color.BLACK, Coordinates.of("a8"), Coordinates.of("a1")))
             );
 
@@ -86,8 +87,8 @@ class GeneralRulesTest {
             Square squareWithBlackRook = board.getSquare(Coordinates.of("a1"));
             squareWithBlackRook.setPiece(new Piece(PieceName.ROOK, Color.WHITE));
 
-            ValidationException thrown = assertThrows(
-                    ValidationException.class,
+            ChessRuleException thrown = assertThrows(
+                    ChessRuleException.class,
                     () -> engine.performMove(board, new Move(Color.WHITE, Coordinates.of("a1"), Coordinates.of("a555")))
             );
 

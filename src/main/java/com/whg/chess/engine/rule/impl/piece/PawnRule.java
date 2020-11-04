@@ -1,8 +1,8 @@
-package com.whg.chess.engine.validator.impl.piece;
+package com.whg.chess.engine.rule.impl.piece;
 
-import com.whg.chess.engine.validator.impl.Rule;
-import com.whg.chess.engine.validator.model.PositionDiff;
-import com.whg.chess.engine.validator.utils.PositionUtils;
+import com.whg.chess.engine.rule.Rule;
+import com.whg.chess.engine.rule.helper.PositionDiff;
+import com.whg.chess.engine.rule.helper.PositionUtils;
 import com.whg.chess.model.*;
 import com.whg.chess.model.enums.Color;
 import com.whg.chess.model.enums.PieceName;
