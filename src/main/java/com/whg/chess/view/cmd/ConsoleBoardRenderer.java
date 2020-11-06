@@ -52,8 +52,6 @@ public class ConsoleBoardRenderer implements BoardRenderer {
     }
 
     private String renderSquare(Square square) {
-//        return "[" + square.getCoordinates().getRow() + "," + square.getCoordinates().getColumn()+"]";
-
         return Optional.ofNullable(square)
                 .map(Square::getPiece)
                 .map(this::getPieceName)

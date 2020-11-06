@@ -2,7 +2,7 @@ package com.whg.chess.engine.rule.impl.piece;
 
 import com.whg.chess.engine.rule.Rule;
 import com.whg.chess.engine.rule.helper.PositionDiff;
-import com.whg.chess.engine.rule.helper.PositionUtils;
+import com.whg.chess.engine.rule.helper.PathUtils;
 import com.whg.chess.model.*;
 import com.whg.chess.model.enums.Color;
 import com.whg.chess.model.enums.PieceName;
@@ -21,7 +21,7 @@ public class PawnRule implements Rule {
     public static final int PAWN_CAPTURING_COLUMN_DISTANCE = 1;
     public static final int MAX_DISTANCE_FROM_START_POSITION = 2;
 
-    private final PositionUtils positionUtils;
+    private final PathUtils pathUtils;
 
     @Override
     public Boolean canValidate(Board board, Move move) {
@@ -69,7 +69,7 @@ public class PawnRule implements Rule {
 
     private ValidationResult validateMoveAhead(Board board, Move move, PositionDiff positionDiff) {
         if (isAllowedToMoveAhead1Square(move.getColor(), positionDiff) || isAllowedToMoveAhead2Squares(move.getColor(), positionDiff, move, board)) {
-            return this.positionUtils.validatePathIsNotBlocked(board, move.getFrom(), move.getTo());
+            return this.pathUtils.validatePathIsNotBlocked(board, move.getFrom(), move.getTo());
         } else {
             return new ValidationResult(ValidationStatus.FAILED, move.getColor() + " pawn on " + move.getFrom() + " is not allowed to piece to " + move.getTo());
         }

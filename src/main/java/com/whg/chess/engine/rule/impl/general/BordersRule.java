@@ -1,11 +1,11 @@
 package com.whg.chess.engine.rule.impl.general;
 
-import com.whg.chess.model.ValidationResult;
-import com.whg.chess.model.enums.ValidationStatus;
 import com.whg.chess.engine.rule.Rule;
 import com.whg.chess.model.Board;
 import com.whg.chess.model.Coordinates;
 import com.whg.chess.model.Move;
+import com.whg.chess.model.ValidationResult;
+import com.whg.chess.model.enums.ValidationStatus;
 import org.springframework.stereotype.Component;
 
 import java.util.stream.Stream;

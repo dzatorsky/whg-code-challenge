@@ -2,7 +2,7 @@ package com.whg.chess.engine.rule.impl.piece;
 
 import com.whg.chess.engine.rule.Rule;
 import com.whg.chess.engine.rule.helper.PositionDiff;
-import com.whg.chess.engine.rule.helper.PositionUtils;
+import com.whg.chess.engine.rule.helper.PathUtils;
 import com.whg.chess.model.*;
 import com.whg.chess.model.enums.PieceName;
 import com.whg.chess.model.enums.ValidationStatus;
@@ -16,7 +16,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class QueenRule implements Rule {
 
-    private final PositionUtils positionUtils;
+    private final PathUtils pathUtils;
 
     @Override
     public Boolean canValidate(Board board, Move move) {
@@ -35,7 +35,7 @@ public class QueenRule implements Rule {
         PositionDiff diff = new PositionDiff(move);
 
         if (diff.isTargetOnDiagonal() || diff.isTargetOnLine()) {
-            return positionUtils.validatePathIsNotBlocked(board, move.getFrom(), move.getTo());
+            return pathUtils.validatePathIsNotBlocked(board, move.getFrom(), move.getTo());
         } else {
             return new ValidationResult(ValidationStatus.FAILED, "The queen at " + move.getFrom() + " can't move to " + move.getTo()
                     + " since the target is neither on the same diagonal nor on the same line");

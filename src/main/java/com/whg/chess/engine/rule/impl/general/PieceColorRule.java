@@ -26,7 +26,7 @@ public class PieceColorRule implements Rule {
         Color pieceColor = fromSquare.getPiece().getColor();
 
         if (pieceColor != move.getColor()) {
-            return new ValidationResult(ValidationStatus.FAILED, move.getColor() + " color player is trying to piece with a " + pieceColor + " piece.");
+            return new ValidationResult(ValidationStatus.FAILED, move.getColor() + " color player is trying to capture a piece with a " + pieceColor + " piece.");
         } else {
             return new ValidationResult(ValidationStatus.PASSED);
         }

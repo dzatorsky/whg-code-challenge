@@ -9,7 +9,6 @@ import com.whg.chess.model.Square;
 import com.whg.chess.model.enums.Color;
 import com.whg.chess.model.enums.PieceName;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;

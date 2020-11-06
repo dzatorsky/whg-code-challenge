@@ -1,27 +1,22 @@
 package com.whg.chess.engine.rule.helper;
 
-import com.whg.chess.engine.rule.Rule;
-import com.whg.chess.engine.rule.impl.piece.PieceRule;
-import com.whg.chess.model.*;
-import com.whg.chess.model.enums.Color;
-import com.whg.chess.model.enums.PieceName;
+import com.whg.chess.model.Board;
+import com.whg.chess.model.Coordinates;
+import com.whg.chess.model.Square;
+import com.whg.chess.model.ValidationResult;
 import com.whg.chess.model.enums.ValidationStatus;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Stream;
-
 @Component
-public class PositionUtils {
+public class PathUtils {
 
     public ValidationResult validatePathIsNotBlocked(Board board, Coordinates from, Coordinates to) {
         PositionDiff diff = new PositionDiff(from, to);
 
-        return validatePathRecursively(diff.getRelativeLocation(), board, from, to);
+        return validatePathIsNotBlockedRecursively(diff.getRelativeLocation(), board, from, to);
     }
 
-    private ValidationResult validatePathRecursively(RelativePosition relativePosition, Board board, Coordinates from, Coordinates to) {
+    private ValidationResult validatePathIsNotBlockedRecursively(RelativePosition relativePosition, Board board, Coordinates from, Coordinates to) {
         int newRow = from.getRow() + relativePosition.getRowIncrementer();
         int newColumn = from.getColumn() + relativePosition.getColumnIncrementer();
 
@@ -34,7 +29,7 @@ public class PositionUtils {
             if (square.getPiece() != null) {
                 return new ValidationResult(ValidationStatus.FAILED, to + " can't be reached since there is a piece at " + newCoordinates + " on the path");
             } else {
-                return validatePathRecursively(relativePosition, board, newCoordinates, to);
+                return validatePathIsNotBlockedRecursively(relativePosition, board, newCoordinates, to);
             }
         }
     }
