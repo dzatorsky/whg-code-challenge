@@ -14,7 +14,9 @@ However, we include the rules below in a simple form.
 - En passant
 
 ```
-The program should simply read in moves and validate them, tracking and showing the board state.  It should determine if a move leaves the player in check.  It does not need to handle checkmate.
+The program should simply read in moves and validate them, tracking and showing the board state.  
+It should determine if a move leaves the player in check.  
+It does not need to handle checkmate.
 ```
 Provided is a Java interface `UserInput` via which each attempted move can be obtained. You do not need to implement this interface. A single implementation `UserInputFile` is also provided which will read the moves from a text file. Three sample move files are provided in the data directory. Feel free to add additional files and/or write automated tests as required.
 
@@ -51,7 +53,7 @@ Please see the Javadoc for `UserInput` to see how the coordinate system for the 
  
 #### How to run
 1. `cd` into the project root
-2. `mvn clean package`
+2. `./mvnw clean package`
 2. `java -jar ./target/chess-0.0.1-SNAPSHOT.jar <path to the file with moves>`. For instance:
 
 ```
