@@ -10,7 +10,8 @@ import java.util.Map;
 
 @Data
 @Configuration
-@ConfigurationProperties(prefix = "chess.pieces")
-public class PieceNameMapping {
+@ConfigurationProperties(prefix = "app")
+public class AppConfig {
+    private Integer boardSize;
     private Map<PieceName, String> nameMappings = new HashMap<>();
 }

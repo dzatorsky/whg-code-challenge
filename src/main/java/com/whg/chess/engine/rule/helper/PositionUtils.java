@@ -1,11 +1,16 @@
 package com.whg.chess.engine.rule.helper;
 
-import com.whg.chess.model.Board;
-import com.whg.chess.model.Coordinates;
-import com.whg.chess.model.Square;
-import com.whg.chess.model.ValidationResult;
+import com.whg.chess.engine.rule.Rule;
+import com.whg.chess.engine.rule.impl.piece.PieceRule;
+import com.whg.chess.model.*;
+import com.whg.chess.model.enums.Color;
+import com.whg.chess.model.enums.PieceName;
 import com.whg.chess.model.enums.ValidationStatus;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 @Component
 public class PositionUtils {

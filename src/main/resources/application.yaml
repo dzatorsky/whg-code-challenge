@@ -1,10 +1,9 @@
-chess:
+app:
   board-size: 8
-  pieces:
-    name-mappings:
-      pawn: P
-      knight: N
-      bishop: B
-      rook: R
-      queen: Q
-      king: K
+  name-mappings:
+    pawn: P
+    knight: N
+    bishop: B
+    rook: R
+    queen: Q
+    king: K

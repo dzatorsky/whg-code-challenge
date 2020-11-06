@@ -1,36 +1,25 @@
 package com.whg.chess.engine.rule.impl.piece;
 
 import com.whg.chess.engine.rule.Rule;
+import com.whg.chess.engine.rule.helper.KingUtils;
 import com.whg.chess.engine.rule.helper.PositionDiff;
 import com.whg.chess.model.*;
 import com.whg.chess.model.enums.PieceName;
 import com.whg.chess.model.enums.ValidationStatus;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 @Component
 @PieceRule
+@RequiredArgsConstructor
 public class KingRule implements Rule {
 
     public static final int KING_MOVE_DISTANCE = 1;
 
-    private final List<Rule> pieceRules;
-
-    public KingRule(@PieceRule List<Rule> pieceRules) {
-        this.pieceRules = pieceRules;
-    }
-
-    @PostConstruct
-    private void init() {
-        // Strange Spring behavior. It won't inject KindRule in the list even though it implements Rule interface and
-        // it can be injected into any other class using this method except this class.
-        // Looks like Spring self injection doesn't work good still.
-        pieceRules.add(this);
-    }
+    private final KingUtils kingUtils;
 
     @Override
     public Boolean canValidate(Board board, Move move) {
@@ -66,17 +55,7 @@ public class KingRule implements Rule {
         return opponentsPieces
                 .stream()
                 .filter(attackingPieceSquare -> !isPieceToBeCapturedByKing(move, attackingPieceSquare))
-                .flatMap(attackingPieceSquare -> isKingUnderAttack(board, move, attackingPieceSquare))
-                .anyMatch(ValidationResult::isSuccess);
-    }
-
-    private Stream<ValidationResult> isKingUnderAttack(Board board, Move move, Square attackingPieceSquare) {
-        Move captureKing = new Move(attackingPieceSquare.getPiece().getColor(), attackingPieceSquare.getCoordinates(), move.getTo());
-
-        return this.pieceRules
-                .stream()
-                .filter(rule -> rule.canValidate(board, captureKing))
-                .map(rule -> rule.validate(board, captureKing));
+                .anyMatch(square -> kingUtils.isKingUnderAttack(board, move.getTo(), square));
     }
 
     private boolean isPieceToBeCapturedByKing(Move move, Square square) {

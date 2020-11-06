@@ -1,5 +1,6 @@
 package com.whg.chess.engine.factory.impl;
 
+import com.whg.chess.config.AppConfig;
 import com.whg.chess.engine.factory.BoardFactory;
 import com.whg.chess.model.Board;
 import com.whg.chess.model.Coordinates;
@@ -7,6 +8,7 @@ import com.whg.chess.model.Piece;
 import com.whg.chess.model.Square;
 import com.whg.chess.model.enums.Color;
 import com.whg.chess.model.enums.PieceName;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -14,14 +16,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
+@RequiredArgsConstructor
 public class BoardFactoryImpl implements BoardFactory {
 
-    @Value("${chess.board-size}")
-    private Integer boardSize;
+    private final AppConfig appConfig;
 
     @Override
     public Board getClearBoard() {
-        return new Board(boardSize);
+        return new Board(appConfig.getBoardSize());
     }
 
     @Override

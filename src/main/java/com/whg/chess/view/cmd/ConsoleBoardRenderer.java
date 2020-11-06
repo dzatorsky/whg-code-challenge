@@ -1,6 +1,6 @@
-package com.whg.chess.view.impl;
+package com.whg.chess.view.cmd;
 
-import com.whg.chess.config.PieceNameMapping;
+import com.whg.chess.config.AppConfig;
 import com.whg.chess.model.Board;
 import com.whg.chess.model.Coordinates;
 import com.whg.chess.model.Piece;
@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ConsoleBoardRenderer implements BoardRenderer {
 
-    private final PieceNameMapping pieceNameMapping;
+    private final AppConfig appConfig;
 
     @Override
     public void renderBoard(Board board) {
@@ -42,6 +42,7 @@ public class ConsoleBoardRenderer implements BoardRenderer {
         builder.append("   ").append(Coordinates.VALID_COLUMNS.stream().map(letter -> "-").collect(Collectors.joining(" ")));
         builder.append("\n");
         builder.append("   ").append(String.join(" ", Coordinates.VALID_COLUMNS));
+        builder.append("\n");
 
         System.out.println(builder.toString());
     }
@@ -60,7 +61,7 @@ public class ConsoleBoardRenderer implements BoardRenderer {
     }
 
     private String getPieceName(Piece piece) {
-        String name = pieceNameMapping.getNameMappings().get(piece.getName());
+        String name = appConfig.getNameMappings().get(piece.getName());
 
         if (piece.getColor() == Color.WHITE) {
             return name.toUpperCase();
